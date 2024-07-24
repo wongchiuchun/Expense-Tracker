@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 
 const API_URL = '/.netlify/functions/api';
 
@@ -117,73 +114,73 @@ const PettyCashTracker = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle>Petty Cash Tracker</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="max-w-md mx-auto p-4 bg-white shadow-md rounded-lg">
+      <h1 className="text-2xl font-bold mb-4">Petty Cash Tracker</h1>
+      <div className="mb-4">
+        <strong>Current Balance: ${balance.toFixed(2)}</strong>
+      </div>
+      {!isInitialBalanceSet && (
         <div className="mb-4">
-          <strong>Current Balance: ${balance.toFixed(2)}</strong>
-        </div>
-        {!isInitialBalanceSet && (
-          <div className="space-y-4 mb-4">
-            <Input
-              type="number"
-              value={initialBalanceInput}
-              onChange={(e) => setInitialBalanceInput(e.target.value)}
-              placeholder="Enter initial balance"
-              step="0.01"
-            />
-            <Button onClick={handleSetInitialBalance} className="w-full">Set Initial Balance</Button>
-          </div>
-        )}
-        <div className="space-y-4 mb-4">
-          <Input
+          <input
             type="number"
-            value={addBalanceAmount}
-            onChange={(e) => setAddBalanceAmount(e.target.value)}
-            placeholder="Amount to add to balance"
+            value={initialBalanceInput}
+            onChange={(e) => setInitialBalanceInput(e.target.value)}
+            placeholder="Enter initial balance"
             step="0.01"
+            className="w-full p-2 border rounded"
           />
-          <Button onClick={handleAddBalance} className="w-full">Add to Balance</Button>
+          <button onClick={handleSetInitialBalance} className="w-full mt-2 p-2 bg-blue-500 text-white rounded">Set Initial Balance</button>
         </div>
-        <div className="space-y-4">
-          <Input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            placeholder="Date"
-          />
-          <Input
-            type="text"
-            value={item}
-            onChange={(e) => setItem(e.target.value)}
-            placeholder="Item"
-          />
-          <Input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="Amount"
-            step="0.01"
-          />
-          <Button onClick={handleAddTransaction} className="w-full">
-            {editingId !== null ? 'Update Transaction' : 'Add Transaction'}
-          </Button>
-        </div>
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold mb-2">Transaction History</h3>
-          <ul className="space-y-2">
-            {transactions.map((t) => (
-              <li key={t.id} className="flex justify-between items-center">
-                <span>{t.date} - {t.item}: ${t.amount.toFixed(2)} ({t.type})</span>
-                <Button onClick={() => handleEditTransaction(t)}>Edit</Button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </CardContent>
-    </Card>
+      )}
+      <div className="mb-4">
+        <input
+          type="number"
+          value={addBalanceAmount}
+          onChange={(e) => setAddBalanceAmount(e.target.value)}
+          placeholder="Amount to add to balance"
+          step="0.01"
+          className="w-full p-2 border rounded"
+        />
+        <button onClick={handleAddBalance} className="w-full mt-2 p-2 bg-green-500 text-white rounded">Add to Balance</button>
+      </div>
+      <div className="mb-4">
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="w-full p-2 border rounded mb-2"
+        />
+        <input
+          type="text"
+          value={item}
+          onChange={(e) => setItem(e.target.value)}
+          placeholder="Item"
+          className="w-full p-2 border rounded mb-2"
+        />
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="Amount"
+          step="0.01"
+          className="w-full p-2 border rounded mb-2"
+        />
+        <button onClick={handleAddTransaction} className="w-full p-2 bg-blue-500 text-white rounded">
+          {editingId !== null ? 'Update Transaction' : 'Add Transaction'}
+        </button>
+      </div>
+      <div>
+        <h2 className="text-xl font-semibold mb-2">Transaction History</h2>
+        <ul>
+          {transactions.map((t) => (
+            <li key={t.id} className="flex justify-between items-center mb-2">
+              <span>{t.date} - {t.item}: ${t.amount.toFixed(2)} ({t.type})</span>
+              <button onClick={() => handleEditTransaction(t)} className="p-1 bg-yellow-500 text-white rounded">Edit</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 };
 
