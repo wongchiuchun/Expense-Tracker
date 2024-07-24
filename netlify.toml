@@ -1,9 +1,18 @@
-[build]
+[
+build
+]
   command = "npm run build"
   functions = "netlify/functions"
   publish = "build"
 
-[[redirects]]
+[
+build.environment
+]
+  NODE_VERSION = "16"
+
+[[
+redirects
+]]
   from = "/*"
   to = "/index.html"
   status = 200
