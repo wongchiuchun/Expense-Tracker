@@ -23,12 +23,21 @@ const PettyCashTracker = () => {
     const data = await response.json();
     setTransactions(data);
     setIsInitialBalanceSet(data.length > 0);
+    updateBalanceFromTransactions(data);
   };
 
   const fetchBalance = async () => {
     const response = await fetch(`${API_URL}/balance`);
     const data = await response.json();
     setBalance(data.balance);
+  };
+
+  const updateBalanceFromTransactions = (transactions) => {
+    const newBalance = transactions.reduce((acc, transaction) => {
+      return transaction.type === 'income' ? acc + transaction.amount : acc - transaction.amount;
+    }, 0);
+    setBalance(newBalance);
+    updateBalance(newBalance);
   };
 
   const handleAddTransaction = async () => {
@@ -54,7 +63,6 @@ const PettyCashTracker = () => {
     }
 
     await fetchTransactions();
-    await updateBalance(balance - newTransaction.amount);
     
     setDate('');
     setItem('');
@@ -65,7 +73,6 @@ const PettyCashTracker = () => {
   const handleSetInitialBalance = async () => {
     const initialBalance = parseFloat(initialBalanceInput);
     if (!isNaN(initialBalance) && !isInitialBalanceSet) {
-      await updateBalance(initialBalance);
       await fetch(`${API_URL}/transactions`, {
         method: 'POST',
         body: JSON.stringify({
@@ -93,7 +100,6 @@ const PettyCashTracker = () => {
         })
       });
       await fetchTransactions();
-      await updateBalance(balance + amountToAdd);
       setAddBalanceAmount('');
     }
   };
@@ -111,6 +117,22 @@ const PettyCashTracker = () => {
     setItem(transaction.item);
     setAmount(transaction.amount.toString());
     setEditingId(transaction.id);
+  };
+
+  const handleExportLog = () => {
+    const log = transactions.map(t => 
+      `${t.date} - ${t.item}: $${t.amount.toFixed(2)} (${t.type})`
+    ).join('\n');
+    
+    const blob = new Blob([log], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'transaction_log.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -180,6 +202,7 @@ const PettyCashTracker = () => {
           ))}
         </ul>
       </div>
+      <button onClick={handleExportLog} className="w-full mt-4 p-2 bg-purple-500 text-white rounded">Export Log</button>
     </div>
   );
 };
